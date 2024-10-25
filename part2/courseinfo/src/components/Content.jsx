@@ -36,7 +36,7 @@ export const Total = ({ parts }) => {
     <>
       {parts.map((part) => {
         console.log(part.exercises)
-        total.push(part.exercises);
+        total.concat(part.exercises);
         console.log(total);
       })}
       <h3>total of {total.reduce((a,b) => a + b, 0)} exercises</h3>

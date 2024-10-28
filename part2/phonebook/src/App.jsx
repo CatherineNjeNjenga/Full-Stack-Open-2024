@@ -1,48 +1,52 @@
 import { useState } from 'react'
+import Filter from './components/Filter';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
 import './App.css'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Megan Markle'}
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ]);
 
-  console.log(persons);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
+  const [searchName, setSearchName] = useState('');
+  const [displayPersons, setDisplayPersons] = useState(persons);
 
-
-  const addName = (event) => {
+  const addPerson = (event) => {
     event.preventDefault();
+
+    if (newName === ''|| newNumber === '') {
+      alert('please enter your name and number');
+      return;
+    }
+
     const personObject = {
       name: newName,
       number: newNumber
     };
-    if (newName === ''|| newNumber === '') {
-      alert('please enter your details')
-    }
     
     setPersons(persons.concat(personObject));
+    setDisplayPersons(displayPersons.concat(personObject));
     setNewName('');
     setNewNumber('');
-    console.log('button clicked', event.target);
   };
 
   const handleNewName = (event) => {
-    console.log(event.target.value);
     let inputName= event.target.value;
     for (let person of persons) {
       if (inputName === person.name) {
         alert(`${inputName} is already added to phonebook`);
         return;
-      } else if (inputName === '') {
-        alert('please input your name')
-      }
-    }
+      }    }
     setNewName(inputName);
   };
 
   const handleNewNumber = (event) => {
-    console.log(event.target.value);
     let inputNumber = event.target.value;
     for (let person of persons) {
       if (inputNumber === person.number) {
@@ -54,37 +58,22 @@ const App = () => {
     setNewNumber(inputNumber);
   };
 
+  // when the search is used display based on the names array vs persons array
+  const handleNameSearch = (event) => {
+    let inputSerch = event.target.value;
+    setSearchName(inputSerch);
+    const names = persons.filter((person) => person.name.toLowerCase().includes(searchName.toLowerCase()))
+    setDisplayPersons(names);
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: 
-          <input 
-            value={newName} 
-            onChange={handleNewName}
-          />
-        </div>
-        <div>
-          number:
-          <input 
-            value={newNumber} 
-            onChange={handleNewNumber}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-        <ul>{persons.map((person) => 
-          <li key={person.name}>{person.name} {person.number}</li>
-        )}
-          
-        </ul>
-       </div>
-      {/* <div>debug: {newName}</div> */}
+      <Filter value={searchName} handleNameSearch={handleNameSearch}/>
+      <h3>add a new</h3>
+      <PersonForm value={{newName, newNumber}} onChange={{handleNewName, handleNewNumber}} onSubmit={addPerson}/>
+      <h3>Numbers</h3>
+      <Persons persons={displayPersons}/>
     </div>
   )
 }

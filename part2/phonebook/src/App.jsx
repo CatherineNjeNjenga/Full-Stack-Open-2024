@@ -13,6 +13,7 @@ const App = () => {
   const [searchName, setSearchName] = useState('');
   const [displayPersons, setDisplayPersons] = useState(persons);
   const [search, setSearch] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('...ooops something went wrong')
 
   const personsOnDisplay = search
     ? displayPersons
@@ -29,6 +30,17 @@ const App = () => {
   }, [])
   console.log('response', persons.length, 'persons');
 
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+    return (
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }
+
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
@@ -38,7 +50,10 @@ const App = () => {
 
     for (let person of persons) {
       if (newName === person.name && newNumber === person.number) {
-        alert(`${newName} is already added to phonebook`);
+        setErrorMessage(`${newName} is already added to phonebook`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000);
         return;
       } else if (newName === person.name && newNumber !== person.number) {
         const answer = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
@@ -52,7 +67,10 @@ const App = () => {
               setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
               setDisplayPersons(displayPersons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
 
-              alert(`${returnedPerson.name}'s new number updated`);
+              setErrorMessage(`${returnedPerson.name}'s new number updated`);
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000);
             })
         }
         return;
@@ -81,6 +99,7 @@ const App = () => {
   };
   // accessing the id of the targeted person
   const handleRemove = (id) => {
+    const person = persons.find(person => person.id === id)
     console.log('clicked...', id)
       personService
         .getOne(id)
@@ -94,10 +113,18 @@ const App = () => {
                 const name = returnedPerson.name
                 setPersons(persons.filter(person => person.id !== id));
                 setDisplayPersons(displayPersons.filter(person => person.id !== id))
-                alert(`${name} deleted`)
+                setErrorMessage(`${name} deleted`)
+                setTimeout(() => {
+                  setErrorMessage(null)
+                }, 5000);
               })
           }
           return;
+        })
+        .catch(error => {
+          setErrorMessage(`Information of ${person.name} has already been removed from the server`)
+          setPersons(persons.filter(person => person.id !== person.id));
+          setDisplayPersons(displayPersons.filter(person => person.id !== person.id))
         })
   }
 
@@ -120,9 +147,12 @@ const App = () => {
     setSearch(false)
   }
 
+  
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage}/>
       <Filter value={searchName} handleNameSearch={handleNameSearch} handleSearchFocus={handleSearchFocus} handleSearchBlur={handleSearchBlur}/>
       <h3>add a new</h3> 
       <PersonForm value={{newName, newNumber}} onChange={{handleNewName, handleNewNumber}} onSubmit={addPerson}/>

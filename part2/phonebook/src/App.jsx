@@ -13,7 +13,7 @@ const App = () => {
   const [searchName, setSearchName] = useState('');
   const [displayPersons, setDisplayPersons] = useState(persons);
   const [search, setSearch] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('...ooops something went wrong')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const personsOnDisplay = search
     ? displayPersons
@@ -28,7 +28,11 @@ const App = () => {
         setPersons(initialPersons);
       })
   }, [])
-  console.log('response', persons.length, 'persons');
+
+  //don't render if no persons fetched from backend
+  // if (!persons) {
+  //   return null
+  // }
 
   const Notification = ({ message }) => {
     if (message === null) {
@@ -146,8 +150,6 @@ const App = () => {
     console.log('on blur', event)
     setSearch(false)
   }
-
-  
 
   return (
     <div>

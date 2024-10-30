@@ -35,6 +35,7 @@ const App = () => {
       name: newName,
       number: newNumber
     };
+
     for (let person of persons) {
       if (newName === person.name && newNumber === person.number) {
         alert(`${newName} is already added to phonebook`);
@@ -102,23 +103,22 @@ const App = () => {
 
   // when the search is used display based on the names array vs persons array
   const handleNameSearch = (event) => {
-    console.log('in focus',event)
+    console.log('in focus',event);
     let inputSerch = event.target.value;
     setSearchName(inputSerch);
-    const names = persons.filter((person) => person.name.toLowerCase().includes(searchName.toLowerCase()))
+    const names = persons.filter((person) => person.name.toLowerCase().includes(searchName.toLowerCase()));
     setDisplayPersons(names);
   };
 
   const handleSearchFocus = (event) => {
     console.log('on focus', event)
     setSearch(true)
-  }
+  };
 
   const handleSearchBlur = (event) => {
     console.log('on blur', event)
     setSearch(false)
   }
-
 
   return (
     <div>
@@ -129,15 +129,9 @@ const App = () => {
       <h3>Numbers</h3>
       <ul>
         {personsOnDisplay.map((person) => 
-        <>
-          <li key={person.id}>{person.name} {person.number}</li>
-          <button onClick={() => handleRemove(person.id)}>remove</button>
-        </>
+          <Persons key = {person.id} person={person} handleRemove={() => handleRemove(person.id)}/>
       )}
       </ul>
-      {/* <Persons 
-        persons={displayPersons} 
-        onClick={() => handleRemove(id)}/> */}
     </div>
   )
 }

@@ -1,16 +1,12 @@
 import React from "react";
 
-const Persons = ({persons, onClick}) => {
+const Persons = ({person, handleRemove}) => {
   return (
     <div>
-      <ul>
-        {persons.map((person) => 
-        <>
-          <li key={person.id}>{person.name} {person.number}</li>
-          <button onClick={onClick}>remove</button>
-        </>
-      )}
-      </ul>
+      <>
+        <li >{person.name} {person.number}</li>
+        <button onClick={handleRemove}>remove</button>
+      </>
     </div>
   )
 }

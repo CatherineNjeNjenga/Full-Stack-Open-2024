@@ -12,6 +12,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [searchName, setSearchName] = useState('');
   const [displayPersons, setDisplayPersons] = useState(persons);
+  const [search, setSearch] = useState(false);
+
+  const personsOnDisplay = search
+    ? displayPersons
+    : persons
 
   useEffect(() => {
     console.log('effect');
@@ -94,25 +99,36 @@ const App = () => {
           return;
         })
   }
-    
 
   // when the search is used display based on the names array vs persons array
   const handleNameSearch = (event) => {
+    console.log('in focus',event)
     let inputSerch = event.target.value;
     setSearchName(inputSerch);
     const names = persons.filter((person) => person.name.toLowerCase().includes(searchName.toLowerCase()))
     setDisplayPersons(names);
   };
 
+  const handleSearchFocus = (event) => {
+    console.log('on focus', event)
+    setSearch(true)
+  }
+
+  const handleSearchBlur = (event) => {
+    console.log('on blur', event)
+    setSearch(false)
+  }
+
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter value={searchName} handleNameSearch={handleNameSearch}/>
-      <h3>add a new</h3>
+      <Filter value={searchName} handleNameSearch={handleNameSearch} handleSearchFocus={handleSearchFocus} handleSearchBlur={handleSearchBlur}/>
+      <h3>add a new</h3> 
       <PersonForm value={{newName, newNumber}} onChange={{handleNewName, handleNewNumber}} onSubmit={addPerson}/>
       <h3>Numbers</h3>
       <ul>
-        {displayPersons.map((person) => 
+        {personsOnDisplay.map((person) => 
         <>
           <li key={person.id}>{person.name} {person.number}</li>
           <button onClick={() => handleRemove(person.id)}>remove</button>

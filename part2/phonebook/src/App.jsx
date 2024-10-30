@@ -3,6 +3,7 @@ import axios from 'axios'
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import personService from './services/persons'
 import './App.css'
 
 const App = () => {
@@ -14,55 +15,86 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect');
-    axios
-      .get('http://localhost:3001/persons')
-      .then((response) => {
+    personService
+      .getAll()
+      .then((initialPersons) => {
         console.log('promise fulfilled')
-        setPersons(response.data);
+        setPersons(initialPersons);
       })
   }, [])
   console.log('response', persons.length, 'persons');
 
   const addPerson = (event) => {
     event.preventDefault();
-
-    if (newName === ''|| newNumber === '') {
-      alert('please enter your name and number');
-      return;
-    }
-
     const personObject = {
       name: newName,
       number: newNumber
     };
-    
-    setPersons(persons.concat(personObject));
-    setDisplayPersons(displayPersons.concat(personObject));
-    setNewName('');
-    setNewNumber('');
+    for (let person of persons) {
+      if (newName === person.name && newNumber === person.number) {
+        alert(`${newName} is already added to phonebook`);
+        return;
+      } else if (newName === person.name && newNumber !== person.number) {
+        const answer = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`);
+        if (answer) {
+          const updatedPerson = {...personObject, number: newNumber};
+          console.log(updatedPerson)
+          personService
+            .update(person.id, updatedPerson)
+            .then(returnedPerson => {
+              console.log(returnedPerson)
+              setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+              setDisplayPersons(displayPersons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+
+              alert(`${returnedPerson.name}'s new number updated`);
+            })
+        }
+        return;
+      }
+    }
+
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        console.log(returnedPerson);
+        setPersons(persons.concat(returnedPerson));
+        setDisplayPersons(displayPersons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      })
   };
 
   const handleNewName = (event) => {
     let inputName= event.target.value;
-    for (let person of persons) {
-      if (inputName === person.name) {
-        alert(`${inputName} is already added to phonebook`);
-        return;
-      }    }
     setNewName(inputName);
   };
 
   const handleNewNumber = (event) => {
     let inputNumber = event.target.value;
-    for (let person of persons) {
-      if (inputNumber === person.number) {
-        alert(`${inputNumber} is already added to phonebook`)
-      } else if(inputNumber === '') {
-        alert('please input your number')
-      }
-    }
     setNewNumber(inputNumber);
   };
+  // accessing the id of the targeted person
+  const handleRemove = (id) => {
+    console.log('clicked...', id)
+      personService
+        .getOne(id)
+        .then(returnedPerson => {
+          const name = returnedPerson.name
+          const answer = window.confirm(`delete ${name}`)
+          if (answer) {
+            personService
+              .remove(id)
+              .then(returnedPerson => {
+                const name = returnedPerson.name
+                setPersons(persons.filter(person => person.id !== id));
+                setDisplayPersons(displayPersons.filter(person => person.id !== id))
+                alert(`${name} deleted`)
+              })
+          }
+          return;
+        })
+  }
+    
 
   // when the search is used display based on the names array vs persons array
   const handleNameSearch = (event) => {
@@ -79,7 +111,17 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm value={{newName, newNumber}} onChange={{handleNewName, handleNewNumber}} onSubmit={addPerson}/>
       <h3>Numbers</h3>
-      <Persons persons={displayPersons}/>
+      <ul>
+        {displayPersons.map((person) => 
+        <>
+          <li key={person.id}>{person.name} {person.number}</li>
+          <button onClick={() => handleRemove(person.id)}>remove</button>
+        </>
+      )}
+      </ul>
+      {/* <Persons 
+        persons={displayPersons} 
+        onClick={() => handleRemove(id)}/> */}
     </div>
   )
 }

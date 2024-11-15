@@ -12,7 +12,7 @@ This repository contains my own exercise solutions to the 2021/22 edition of the
 
 An overall introduction to the course. It introduces to some concepts like HTTP requests, how traditional web apps work, DOM, CSS and Single Page Applications.
 
-- [new note](/part0) - The diagram shows how communicate the browser and the server when user added a note to a page containing JavaScript.
+- [new note](/part0/part0.4.png) - The diagram shows how communicate the browser and the server when user added a note to a page containing JavaScript.
 - [single page app](/part0) - The diagram shows the communication between the browser and the server when user opened single page app on the browser.
 - [new note (single page app)](/part0) - The diagram shows how communicate the browser and the server when user added a note to a single page app.
 

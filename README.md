@@ -1,4 +1,4 @@
-# University of Helsinki - Full Stack Open - 2021/22
+# University of Helsinki - Full Stack Open - 2024
 
 ### About the course
 
@@ -7,14 +7,6 @@ The course introduce to modern JavaScript-based web development. The main focus 
 ### About this repository
 
 This repository contains my own exercise solutions to the 2021/22 edition of the [Full Stack Open](https://fullstackopen.com/en) course from the [University of Helsinki](https://www.helsinki.fi/en).
-
-[//]:#  ### Certificates
-
-//  ![Certificate of completion Fullstack Open Course from the University of Helsinki](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/10f672c8c354ba05171fa6c640b920b2)
-
-//  [Certificate of completion GraphQL part of the course](https://studies.cs.helsinki.fi/stats/api/certificate/fs-graphql/en/9a4f9bce80477a2d58ca343c91f59e5b)
-
-//  [Certificate of completion CI/CD part of the course](https://studies.cs.helsinki.fi/stats/api/certificate/fs-cicd/en/94e6f70bdae2d7eea8861fa8ce87adf0)
 
 ### Part 0 - [Fundamentals of Web apps](https://fullstackopen.com/en/part0)
 

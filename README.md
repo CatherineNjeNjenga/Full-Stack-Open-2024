@@ -8,7 +8,7 @@ The course introduce to modern JavaScript-based web development. The main focus 
 
 This repository contains my own exercise solutions to the 2021/22 edition of the [Full Stack Open](https://fullstackopen.com/en) course from the [University of Helsinki](https://www.helsinki.fi/en).
 
-//  ### Certificates
+[//]  ### Certificates
 
 //  ![Certificate of completion Fullstack Open Course from the University of Helsinki](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/10f672c8c354ba05171fa6c640b920b2)
 

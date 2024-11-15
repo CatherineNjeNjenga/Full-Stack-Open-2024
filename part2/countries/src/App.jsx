@@ -12,6 +12,7 @@ const App = () => {
   const [details, setDetails] = useState({})
   const [temperature, setTemperature] = useState('')
   const [windSpeed, setWindSpeed] = useState('')
+  const [weatherIcon, setWeatherIcon] = useState('')
 
   useEffect(() => {
     console.log('effect value of countries', countries)
@@ -42,7 +43,7 @@ const App = () => {
     setNumber(totalCountries)
     setCountries(displayCountries)
     console.log(value)
-
+    
     if (number === 1) {
       console.log(countries)
       if (countries.length === 1) {
@@ -60,20 +61,38 @@ const App = () => {
             console.log(error)
           })
       }
+        // axios
+        // .get(`https://api.open-meteo.com/v1/forecast?latitude=${displayCountry.capitalInfo.latlng[0]}&longitude=${displayCountry.capitalInfo.latlng[1]}&current=temperature_2m,wind_speed_10m&wind_speed_unit=ms`)
+        // .then(response => {
+        //   console.log(response.data)
+        //   const temp = response.data.current.temperature_2m
+        //   setTemperature(temp)
+        //   console.log(temp)
+        //   const wind = response.data.current.wind_speed_10m
+        //   console.log(wind)
+        //   setWindSpeed(wind)
+        // })
+        // .catch(error => {
+        //   console.log(error)
+        // })
+
         axios
-        .get(`https://api.open-meteo.com/v1/forecast?latitude=${displayCountry.capitalInfo.latlng[0]}&longitude=${displayCountry.capitalInfo.latlng[1]}&current=temperature_2m,wind_speed_10m&wind_speed_unit=ms`)
+        .get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${displayCountry.capital}`)
         .then(response => {
           console.log(response.data)
-          const temp = response.data.current.temperature_2m
+          const temp = response.data.current.temperature
           setTemperature(temp)
           console.log(temp)
-          const wind = response.data.current.wind_speed_10m
+          const wind = response.data.current.wind_speed
           console.log(wind)
           setWindSpeed(wind)
+          const icon = response.data.current.weather_icons
+          setWeatherIcon(icon)
         })
         .catch(error => {
           console.log(error)
         })
+
 
         // axios
         // .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${displayCountry.capitalInfo.latlng[0]}&lon=${displayCountry.capitalInfo.latlng[1]}&exclude={part}&appid=${api_key}`)
@@ -156,6 +175,7 @@ const App = () => {
           <img src={displayCountry.flags.png} />
           <h3>Weather in {displayCountry.capital}</h3>
           <p>temperature {temperature} Celcius</p>
+          <img src={weatherIcon} />
           <p>wind {windSpeed} m/s</p>
         </>
        }

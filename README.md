@@ -34,7 +34,7 @@ This part covers how to display list items in _React_ and how to handle forms. I
 
 - [courseinfo](/part2/courseinfo) - Extended Course info app from part 1.
 - [phonebook](/part2/phonebook) - Phonebook, add/delete contacts with numbers, edit numbers.
-- [dataforcountries](/part2/countries) - A react app that fetches and displays information form the [REST Countries](https://studies.cs.helsinki.fi/restcountries/)) and [Open-Meteo](https://open-meteo.com/)/) API's.
+- [dataforcountries](/part2/countries) - A react app that fetches and displays information form the [REST Countries](https://studies.cs.helsinki.fi/restcountries/) and [Open-Meteo](https://open-meteo.com/) API's.
 
 ### Part 3 - [Programming a server with NodeJS and Express](https://fullstackopen.com/en/part3)
 

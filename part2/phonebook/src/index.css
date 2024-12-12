@@ -76,3 +76,7 @@ button:focus-visible {
   padding: 10px;
   margin-bottom: 10px;
 }
+
+.list {
+  list-style: none;
+}

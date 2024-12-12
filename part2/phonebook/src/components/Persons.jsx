@@ -4,7 +4,7 @@ const Persons = ({person, handleRemove}) => {
   return (
     <div>
       <>
-        <li >{person.name} {person.number}</li>
+        <li className="list">{person.name} {person.number}</li>
         <button onClick={handleRemove}>remove</button>
       </>
     </div>

@@ -29,11 +29,6 @@ const App = () => {
       })
   }, [])
 
-  //don't render if no persons fetched from backend
-  // if (!persons) {
-  //   return null
-  // }
-
   const Notification = ({ message }) => {
     if (message === null) {
       return null
@@ -70,8 +65,15 @@ const App = () => {
               console.log(returnedPerson)
               setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
               setDisplayPersons(displayPersons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
-
               setErrorMessage(`${returnedPerson.name}'s new number updated`);
+              setNewName('');
+              setNewNumber('');
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000);
+            })
+            .catch(error => {
+              setErrorMessage(error.response.data.error)
               setTimeout(() => {
                 setErrorMessage(null)
               }, 5000);
@@ -89,6 +91,13 @@ const App = () => {
         setDisplayPersons(displayPersons.concat(returnedPerson));
         setNewName('');
         setNewNumber('');
+      })
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000);
+        console.log(error.response.data.error)
       })
   };
 
@@ -109,14 +118,15 @@ const App = () => {
         .getOne(id)
         .then(returnedPerson => {
           const name = returnedPerson.name
+          console.log(name)
           const answer = window.confirm(`delete ${name}`)
           if (answer) {
             personService
               .remove(id)
-              .then(returnedPerson => {
-                const name = returnedPerson.name
+              .then(() => {
                 setPersons(persons.filter(person => person.id !== id));
                 setDisplayPersons(displayPersons.filter(person => person.id !== id))
+                console.log(name)
                 setErrorMessage(`${name} deleted`)
                 setTimeout(() => {
                   setErrorMessage(null)
@@ -129,12 +139,16 @@ const App = () => {
           setErrorMessage(`Information of ${person.name} has already been removed from the server`)
           setPersons(persons.filter(person => person.id !== person.id));
           setDisplayPersons(displayPersons.filter(person => person.id !== person.id))
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000);
         })
   }
 
   // when the search is used display based on the names array vs persons array
   const handleNameSearch = (event) => {
     console.log('in focus',event);
+    
     let inputSerch = event.target.value;
     setSearchName(inputSerch);
     const names = persons.filter((person) => person.name.toLowerCase().includes(searchName.toLowerCase()));
@@ -147,6 +161,7 @@ const App = () => {
   };
 
   const handleSearchBlur = (event) => {
+    
     console.log('on blur', event)
     setSearch(false)
   }

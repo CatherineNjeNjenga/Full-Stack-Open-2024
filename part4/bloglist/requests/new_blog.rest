@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Meghan's Mirror",
+  "author": "Effervescence Media Group",
+  "url": "https://www.meghansmirror.com/",
+  "likes": 100
+}

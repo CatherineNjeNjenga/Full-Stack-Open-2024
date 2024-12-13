@@ -8,7 +8,6 @@ const api = supertest(app)
 const helper = require('./test_helper.test')
 
 const Blog = require('../models/blog')
-const { update } = require('lodash')
 
 describe('when there is initially some blogs saved', () => {
   beforeEach(async () => {

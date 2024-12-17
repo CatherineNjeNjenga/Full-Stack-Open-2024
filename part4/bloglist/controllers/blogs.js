@@ -33,7 +33,7 @@ blogsRouter.post('/', async (request, response) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes,
+    likes: body.likes || 0,
     user: user._id
   })
 
@@ -41,7 +41,7 @@ blogsRouter.post('/', async (request, response) => {
   user.blogs = user.blogs.concat(savedNote._id)
   await user.save()
   
-  response.json(savedNote)
+  response.status(201).json(savedNote)
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
@@ -60,7 +60,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   return response.status(401).json({ error: 'invalid user' })
 })
 
-blogsRouter.put('./:id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
 
   const blog = {

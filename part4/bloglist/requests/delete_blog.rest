@@ -1,5 +1,5 @@
 delete http://localhost:3003/api/blogs/675c1429971a98051ab54b28
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjc1YWNmZTBiZGE5Y2RiMDA1YjgwY2E1IiwiaWF0IjoxNzM0MDg4MjE1LCJleHAiOjE3MzQwOTE4MTV9.vJWa2TAV1HWnhC1LQa4lZ-crifN4n1LNkkI_6nhe9_E
+Authorization: Bearer token
 
 

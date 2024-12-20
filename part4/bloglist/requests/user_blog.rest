@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjc1YWNmZTBiZGE5Y2RiMDA1YjgwY2E1IiwiaWF0IjoxNzM0MDg0NTg0LCJleHAiOjE3MzQwODgxODR9.zSLWi-pEjtWcH_UNPa_7OXMvXZj9uC4FtR-VZcNOau0
+Authorization: Bearer token
 
 {
   "title": "Career Edit",

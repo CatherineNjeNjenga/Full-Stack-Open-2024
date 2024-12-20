@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { test, after, before, describe, beforeEach } = require('node:test')
+const { test, after, describe, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
@@ -14,30 +14,32 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 describe('when there is initially some blogs saved', () => {
-let token
+  let token
 
   beforeEach(async () => {
-    await User.deleteMany({})
     await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
 
     const passwordHash = await bcrypt.hash('arto', 10)
-  const user = new User({
-    username: 'hellas',
-    name: 'Arto Hellas',
-    passwordHash
-  })
-  await user.save()
-
-  const response = await api
-    .post('/api/login')
-    .send({
+    
+    const user = new User({
       username: 'hellas',
       name: 'Arto Hellas',
-      password: 'arto'
+      passwordHash
     })
-  token = response._body.token
-  await Blog.insertMany(helper.initialBlogs)
+    await user.save()
 
+    const result = await api
+      .post('/api/login')
+      .send({
+        username: 'hellas',
+        name: 'Arto Hellas',
+        password: 'arto'
+      })
+
+    token = result._body.token
   })
 
   test('blogs are returned as json', async () => {
@@ -46,23 +48,22 @@ let token
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-    // console.log(result)
   })
 
   test('all blogs are returned', async () => {
-    const response = await api
+    const result = await api
       .get('/api/blogs')
       .set('Authorization', `Bearer ${token}`)
   
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    assert.strictEqual(result.body.length, helper.initialBlogs.length)
   })
 
   test('a specific blog is within the returned blogs', async () => {
-    const response = await api
+    const result = await api
       .get('/api/blogs')
       .set('Authorization', `Bearer ${token}`)
 
-    const title = response.body.map(blog => blog.title)
+    const title = result.body.map(blog => blog.title)
   
     assert(title.includes("Money Diaries"))
   })
@@ -84,13 +85,14 @@ let token
   
     test('fails with status code 404 if blog does not exist', async () => {
       const validNonexistingId = await helper.nonExistingId()
+
       await api
         .get(`/api/blogs/${validNonexistingId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(404)
     })
   
-    test('fails with status code 400 id is invalid', async () => {
+    test('fails with status code 400 if id is invalid', async () => {
       const invalidId = '5a3d5da59070081a82a3445'
   
       await api
@@ -102,10 +104,8 @@ let token
   
   describe('addition of a new blog', () => {
     test('succeeds with valid data', async () => {
-      // const token = process.env.TOKEN
-      const decodedToken = await jwt.verify(token, process.env.SECRET)
-      // console.log('1', decodedToken)
-      const users = await User.find({})
+      const decodedToken = jwt.verify(token, process.env.SECRET)
+
       const user = await User.findById(decodedToken.id)
   
       const newBlog = {
@@ -116,7 +116,7 @@ let token
         user: user._id
       }
   
-      const result = await api
+      await api
         .post('/api/blogs')
         .send(newBlog)
         .set({'Authorization': `Bearer ${token}`})
@@ -132,30 +132,24 @@ let token
     })
   
     test('fails with status code 400 if data invalid', async () => {
-      
       const newBlog = {
         author: "Rebecca Moore",
         url: "https://phdinclothes.com/",
         likes: 20
       }
-      const result = await api
+
+      await api
         .post('/api/blogs')
         .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
-      // console.log('4',result)
+
       const blogsAtEnd = await helper.blogsInDb()
-      console.log('1', blogsAtEnd)
-      console.log('2', helper.initialBlogs)
   
       assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
   
     test('blog unique identifier is named id', async () => {
-      // before(async () => {
-      //   await Blog.deleteMany({})
-      //   await Blog.insertMany(helper.initialBlogs)
-      // })
       const newBlog = {
         title: "PhD in Clothes",
         author: "Rebecca Moore",
@@ -168,11 +162,11 @@ let token
         .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
     
-      const response = await api
+      const result = await api
         .get('/api/blogs')
         .set('Authorization', `Bearer ${token}`)
   
-      const targetBlog = response.body.filter(blog => blog.title === "PhD in Clothes")
+      const targetBlog = result.body.filter(blog => blog.title === "PhD in Clothes")
       assert(Object.keys(targetBlog[0]).includes('id'))
     })
   
@@ -181,7 +175,7 @@ let token
         title: "PhD in Clothes",
         author: "Rebecca Moore",
         url: "https://phdinclothes.com/",
-        user: 1
+        user: 1,
       }
     
       await api
@@ -189,20 +183,39 @@ let token
         .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
     
-      const response = await api
+      const result = await api
         .get('/api/blogs')
         .set('Authorization', `Bearer ${token}`)
   
-      const targetBlog = response.body.filter(blog => blog.title === "PhD in Clothes")
+      const targetBlog = result.body.filter(blog => blog.title === "PhD in Clothes")
       assert.strictEqual(targetBlog[0].likes, 0)
+    })
+
+    test('fails with status code 400 if token is not provided', async () => {
+      const newBlog = {
+        title: "PhD in Clothes",
+        author: "Rebecca Moore",
+        url: "https://phdinclothes.com/",
+        likes: 20,
+        user: 2,
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+
+      const blogsAtEnd = await helper.blogsInDb()
+  
+      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
     })
   })
   
   describe('deletion of a blog', () => {
     test('succeeds with status code 204 if id is valid', async () => {
-      const decodedToken = await jwt.verify(token, process.env.SECRET)
+      const decodedToken = jwt.verify(token, process.env.SECRET)
       const user = await User.findById(decodedToken.id)
-      // console.log(decodedToken)
+
       const newBlog = {
         title: "PhD in Clothes",
         author: "Rebecca",
@@ -211,18 +224,18 @@ let token
         user: user._id
       }
   
-      const toDelete = await api
+      await api
         .post('/api/blogs')
         .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
+
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart.filter(blog => blog.title === newBlog.title)
-      // console.log('1', blogToDelete.id)
-      const result = await api
+
+      await api
         .delete(`/api/blogs/${blogToDelete[0].id}`)
         .set('Authorization', `Bearer ${token}`)
         .expect(204)
-        // console.log(result)
     
       const blogsAtEnd = await helper.blogsInDb()
       const contents = blogsAtEnd.map(blog => blog.title)
@@ -237,16 +250,16 @@ let token
     test('succeeds if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToUpdate = blogsAtStart[0]
-      const updated = {...blogToUpdate, likes: 75}
-      // console.log(blogToUpdate)
-      const returned = await api
+      const updatedBlog = {...blogToUpdate, likes: 75}
+
+      await api
         .put(`/api/blogs/${blogToUpdate.id}`)
         .set('Authorization', `Bearer ${token}`)
-        .send(updated)
-      // console.log(returned)
+        .send(updatedBlog)
+
       const blogsAtEnd = await helper.blogsInDb()
-      const contents = blogsAtEnd.filter(blog => blog.title === updated.title)
-      assert.strictEqual(contents[0].likes, updated.likes)
+      const contents = blogsAtEnd.filter(blog => blog.title === updatedBlog.title)
+      assert.strictEqual(contents[0].likes, updatedBlog.likes)
     })
   })
 
@@ -623,8 +636,6 @@ let token
           .expect('Content-Type', /application\/json/)
     
         const usersAtEnd =  await helper.usersInDb()
-        console.log('1', usersAtEnd)
-        console.log('2', usersAtStart)
   
         assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
     

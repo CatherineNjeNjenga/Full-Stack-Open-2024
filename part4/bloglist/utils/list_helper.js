@@ -18,12 +18,11 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-  // const all = blogs.map(blog => {
-  //   return  blog = {author:blog.author, blog: count}
-  // })
   const grouped = _.groupBy(blogs, 'author')
+
   let maxLen = Math.max(...(_.map(grouped, group => group.length)))
   const filtGroup = _.filter(grouped, group => group.length === maxLen)
+  
   if (filtGroup.length !== 0) {
     const mostBlog = {
       author: filtGroup[0][0].author,
@@ -39,13 +38,16 @@ const mostLikes = (blogs) => {
   const groupedByAut = _.groupBy(blogs, 'author')
   const allBlogs = _.forEach(groupedByAut, group => _.forEach(group))
   const authArr = (Object.keys(allBlogs))
+
   let likesArr = []
   for (let blogValues of Object.values(allBlogs)) {
     const totalLikes = blogValues.reduce((sum, blog) => sum + blog.likes, 0)
     likesArr = likesArr.concat(totalLikes)
   }
+
   const maxLikes = Math.max(...likesArr)
   const blogInd = likesArr.indexOf(maxLikes)
+
   const mostLike = {
     author: authArr[blogInd],
     likes: maxLikes

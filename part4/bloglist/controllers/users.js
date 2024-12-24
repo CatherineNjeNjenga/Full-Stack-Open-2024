@@ -47,10 +47,10 @@ usersRouter.put('/:id', async (request, response) => {
   const {username, password, name } = request.body
 
   const user = {
-
+    password
   }
 
-  const updatedBlog = await User.findByIdAndUpdate(request.params.id, blog, { new: true })
+  const updatedBlog = await User.findByIdAndUpdate(request.params.id, user, { new: true })
   response.json(updatedBlog)
 })
 

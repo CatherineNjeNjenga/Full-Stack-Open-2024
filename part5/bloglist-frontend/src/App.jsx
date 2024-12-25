@@ -44,7 +44,6 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
-      console.log(user)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
@@ -86,9 +85,30 @@ const App = () => {
   const addLikes = async (updatedBlog, id) => {
     const response = await blogService.update(updatedBlog, id)
     console.log(response)
-    const blogId = response.id
-    console.log((blogs.map(blog => blog.id === id ? response : blog)).sort((a, b) => console.log(a.likes > b.likes)))
+    function compareNumbers(a, b) {
+      return b.likes - a.likes
+    }
+
     setBlogs(blogs.map(blog => blog.id === id ? response : blog))
+    setBlogs((blogs.map(blog => blog.id === id ? response : blog)).sort(compareNumbers))
+  }
+
+  const handleRemove = async (blogObject, id) => {
+    try {
+      const userResponse = window.confirm(`Remove ${blogObject.title} by ${blogObject.author}`)
+
+      if (userResponse) {
+        await blogService.remove(blogObject, id)
+      // console.log(blogs.filter(blog => blog.id !== id))
+      setBlogs(blogs.filter(blog => blog.id !== id))
+      } else {
+        return
+      }
+      
+    } catch (error) {
+      console.log(error.message)
+    }
+    
   }
 
   const Notification = ( {message} ) => {
@@ -133,7 +153,7 @@ const App = () => {
      }
      <div>
         {blogs.map((blog) => 
-          <Blog key={blog.id} blog={blog} addLikes={addLikes} user={user} />
+          <Blog key={blog.id} blog={blog} addLikes={addLikes} user={user} removeBlog={handleRemove} />
         )}
       </div>
     </div>

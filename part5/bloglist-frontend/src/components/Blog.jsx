@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, addLikes, user }) => {
+const Blog = ({ blog, addLikes, user, removeBlog }) => {
     const [showBlog, setShowBlog] = useState(false)
     const blogStyle = {
       paddingTop: 10,
@@ -21,7 +21,7 @@ const Blog = ({ blog, addLikes, user }) => {
       }
     }
 
-    const handleLike = (event) => {
+    const handleLike = () => {
       let currentLikes = blog.likes
       let updatedLikes = currentLikes += 1
       const blogId = blog.id
@@ -32,27 +32,35 @@ const Blog = ({ blog, addLikes, user }) => {
       console.log(user)
     }
 
+    const handleRemove = () => {
+      const blogObject = blog
+      const blogId = blog.id
+      removeBlog(blogObject, blogId)
+    }
+
     return (
       <>
         {showBlog ?
         <>
-          <ul >
-            <li style={blogStyle}>{blog.title}</li> 
-          </ul>
-          <button onClick={handleShowBlog}>view</button>
-        </> :
-        <>
-        <ul>
-            <li style={blogStyle}>{blog.title}</li> 
+          <ul>
+            <li style={blogStyle}>{blog.title}</li>
+            <button onClick={handleShowBlog}>hide</button>
             <li style={blogStyle}>{blog.author}</li> 
             <li style={blogStyle}>{blog.url}</li> 
             <li style={blogStyle}>likes {blog.likes}<button onClick={handleLike}>like</button></li>
             <li style={blogStyle}>{user.name}</li> 
           </ul>
-          <button onClick={handleShowBlog}>hide</button>
+          <button onClick={handleRemove}>remove</button>
+        </> :
+        <>
+          <ul >
+            <li style={blogStyle}>{blog.title}</li>
+            <button onClick={handleShowBlog}>view</button>
+          </ul>
         </>}
       </>
     )
 }
 
 export default Blog
+

@@ -44,13 +44,15 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const blog =await Blog.findById(request.params.id)
-  
+  const blog = await Blog.findById(request.params.id)
+  console.log(request.params.id)
   const user = request.user
   if (!user) {
     return response.status(400).json({ error: 'user invalid' })
   }
 
+  console.log(blog.user.toString())
+  console.log(user._id.toString())
   if (blog.user.toString() === user._id.toString()) {
     const deletedNote = await Blog.findByIdAndDelete(request.params.id)
     return response.status(204).end()
